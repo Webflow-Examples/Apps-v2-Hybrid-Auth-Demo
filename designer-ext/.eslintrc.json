@@ -1,0 +1,4 @@
+{
+  // Step 1: Add next/babel to stop the editor errors.
+  "extends": ["next/babel", "next/core-web-vitals"]
+}
