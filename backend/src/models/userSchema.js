@@ -1,4 +1,3 @@
-import dbConnect from '@/utils/dbConnect';
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
