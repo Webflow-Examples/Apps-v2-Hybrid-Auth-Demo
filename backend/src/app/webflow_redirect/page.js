@@ -28,11 +28,11 @@ export default async function WebflowRedirectPage(request) {
           const session = await getServerSession(authOptions);
 
           // Create a JWT for the user's session.
-          const idToken = jwt.sign({userId: session.user.id}, process.env.DESIGNER_EXT_JWT_SECRET, { expiresIn: '30d' });
+          const sessionToken = jwt.sign({userId: session.user.id}, process.env.DESIGNER_EXT_JWT_SECRET, { expiresIn: '30d' });
 
           // Create a new token instance for storing in the database.
           const newToken = new Token({
-            idToken,
+            sessionToken,
             accessToken: token, // The Webflow API access token.
             userId: session.user.id // The user's id.
           });
@@ -40,10 +40,10 @@ export default async function WebflowRedirectPage(request) {
           // Save the new token instance to the database.
           await newToken.save();
 
-          // Set a cookie named 'webflow_auth' with the idToken as the value.
+          // Set a cookie named 'webflow_auth' with the sessionToken as the value.
           cookies().set({
             name: 'webflow_auth',
-            value: idToken,
+            value: sessionToken,
             path: '/',
             secure: true,
             sameSite: 'none',

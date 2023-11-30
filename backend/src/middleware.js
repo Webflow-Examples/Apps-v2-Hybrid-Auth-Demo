@@ -27,7 +27,7 @@ export async function middleware(request) {
       const response = NextResponse.next();
       response.headers.set('Access-Control-Allow-Origin', process.env.NEXT_PUBLIC_WEBFLOW_DESIGNER_EXT_URL);
       response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, WF-Authorization');
+      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, WF-Authorization, Id-Token');
       return response;
   }
 }

@@ -1,4 +1,4 @@
-var idToken = null;
+var sessionToken = null;
 var sites = null;
 var isLoading = false;
 var error = null;
@@ -6,7 +6,58 @@ var itemsPerPage = 4;
 var currentPage = 0;
 var BACKEND_URL = 'https://mint-flounder-crucial.ngrok-free.app';
 
-document.getElementById('backend-iframe').src = BACKEND_URL + '/webflow_iframe';
+function setIframe() {
+  document.getElementById('backend-iframe').src = BACKEND_URL + '/webflow_iframe';
+}
+setIframe();
+
+var authCheckInterval = null;
+function checkForAuth() {
+  if (sessionToken === null) {
+    // Refresh the iFrame to check for Auth again.
+    setIframe()
+  } else {
+    clearInterval(authCheckInterval); // Stop checking for messages
+  }
+}
+
+// Function to toggle between authentication and authenticated states
+function authenticate() {
+  window.open(BACKEND_URL + '/webflow_install', "_blank");
+  document.getElementById('loading-message').style.display = 'block';
+  document.getElementById('login-btn').style.display = 'none';
+  authCheckInterval = setInterval(checkForAuth, 2000);
+}
+
+async function getCurrentUser() {
+  document.getElementById('who-am-i-btn').disabled = true;
+  const idToken = await webflow.getIdToken();
+  if (idToken) {
+    error = null;
+    var request = new XMLHttpRequest();
+    request.open('GET', BACKEND_URL + '/api/whoami', true);
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.setRequestHeader('WF-Authorization', sessionToken);
+    request.setRequestHeader('Id-Token', idToken);
+    request.onload = function() {
+      if (request.status !== 200) {
+        error = 'Failed to identify user.';
+        console.error(error);
+      } else {
+        console.log(request.responseText);
+        debugger;        
+      }
+      document.getElementById('who-am-i-btn').disabled = false;
+    };
+    request.onerror = function() {
+      error = 'Failed to identify user.';
+      console.error(error);
+      document.getElementById('who-am-i-btn').disabled = false;
+    };
+
+    request.send();
+  }
+}
 
 function getSites() {
   document.getElementById('list-sites-btn').disabled = true;
@@ -14,7 +65,7 @@ function getSites() {
   var request = new XMLHttpRequest();
   request.open('GET', BACKEND_URL + '/api/getSites', true);
   request.setRequestHeader('Content-Type', 'application/json');
-  request.setRequestHeader('WF-Authorization', idToken);
+  request.setRequestHeader('WF-Authorization', sessionToken);
   request.onload = function() {
     if (request.status !== 200) {
       error = 'Failed to load sites';
@@ -90,9 +141,9 @@ window.addEventListener('message', function(event) {
     return;
   }
   try {
-    var token = event.data.idToken;
+    var token = event.data.sessionToken;
     if (token) {
-      idToken = token;
+      sessionToken = token;
       document.getElementById('authenticated-content').style.display = 'block';
       document.getElementById('unauthenticated-content').style.display = 'none';
       window.removeEventListener('message', arguments.callee);

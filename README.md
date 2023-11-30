@@ -26,7 +26,7 @@ The following environment variables are required to run this application:
 
 -   `GITHUB_ID` - Your GitHub app ID. Used for OAuth.
 -   `GITHUB_SECRET` - Your GitHub app secret. Used for OAuth.
--   `NEXTAUTH_SECRET` - A secret string used to encrypt session data.
+-   `NEXTAUTH_SECRET` - Any secret string that can be used to encrypt session data.
 -   `NEXTAUTH_URL` - The base URL for the NextAuth.js endpoints.
 -   `NEXT_PUBLIC_WEBFLOW_DESIGNER_EXT_URL` - The URL for the Webflow designer extension. Replace `<ext-id>` with your extension ID. Can be localhost for development.
 -   `CLIENT_ID` - Your Webflow API client ID.
@@ -63,8 +63,8 @@ Getting Started
 Key Components
 --------------
 
--   `WebflowiFramePage` - A Next.js page that retrieves an 'idToken' from the cookie store and passes it to the `WebflowiFrame` component.
--   `WebflowiFrame` - A React component that sends a message containing the 'idToken' to its parent window. The message is only sent if the 'idToken' is defined and has not been sent before. This demonstrates secure cross-origin communication using the `window.postMessage` method.
+-   `WebflowiFramePage` - A Next.js page that retrieves an 'sessionToken' from the cookie store and passes it to the `WebflowiFrame` component.
+-   `WebflowiFrame` - A React component that sends a message containing the 'sessionToken' to its parent window. The message is only sent if the 'sessionToken' is defined and has not been sent before. This demonstrates secure cross-origin communication using the `window.postMessage` method.
 -   `GET` function (in `/api/getSites`): This function is triggered when the Webflow designer extension sends a GET request. It validates the authorization token from the request headers, connects to the MongoDB database to retrieve the user's access token, and then fetches the sites data from the Webflow API using the access token. The response is sent back to the designer extension with the 'Access-Control-Allow-Origin' header set to allow cross-origin requests.
 
 Usage

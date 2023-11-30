@@ -1,6 +1,8 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/options"
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
+import { getAuthUrl } from "@/utils/webflow_helper";
+import { cookies } from 'next/headers';
 
 /**
  * Default exported async function for the Home component.
@@ -18,6 +20,13 @@ export default async function Home() {
   // If no session exists, redirect to the login page.
   if (!session) {
     redirect('/api/auth/signin?callbackUrl=/')
+  }
+
+  // If there's no auth cookie, redirect to the Webflow OAuth page.
+  const cookieStore = cookies();
+  const webflow_auth = cookieStore.get('webflow_auth');
+  if (!webflow_auth){
+    redirect(getAuthUrl());
   }
 
   // If a session does exist, return a welcome message for the user.

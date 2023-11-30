@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const tokenSchema = new mongoose.Schema({
-  idToken: String,
+  sessionToken: String,
   accessToken: String,
   userId: String,
 });
